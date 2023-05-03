@@ -1,0 +1,136 @@
+create table tb_fornecedor(
+in integer not null primary key,
+nome varchar (100) not null,
+razaosocial varchar(100),
+telefone varchar(10),
+celular01 varchar (11),
+celular02 varchar (11),
+celular03 varchar (11),
+email varchar (30),
+cep varchar (9),
+rua varchar (50),
+referencia varchar (50),
+id_bairro integer references tb_auxiliar on update cascade on delete restrict,
+site varchar(50),
+cnpj varchar(13),
+inscricaoestadual varchar (50),
+inscricaomunicipal varchar (50)
+);
+
+create table tb_produto01(
+id integer not null primary key,
+nome varchar(50) not null,
+id_tipoproduto  integer referecens tb_auxiliar(id) on update cascade on delete restrict,
+foto bytea,
+marca varchar(50),
+descrição varchar (50),
+codigobarra integer,
+observacao varchar (80)
+);
+
+
+create table tb_estoque(
+id integer not null primary key,
+id_produto integer not null references tb_produto01(id) on update cascade on delete restrict,
+quantidade integer not null,
+
+);
+
+
+create table tb_movimentacao01(
+id integer not null primary key,
+datamovimentacao integer not null,
+quantidade integer not null,
+custounit double,
+isCompraEfetuada boolean,
+codclienteorfornecedor integer,
+notafiscal varchar (80),
+observacao varchar (100),
+id_tipomovimentacao integer not null references tb_auxiliar(id) on updade cascade on delete restrict,
+id_produto integer not null references tb_produto01(id) on updade cascade on delete restrict
+);
+
+
+Estoque 
+
+	* Entrada  : Tipo de movimentaçao entrada
+
+		* Compra : informar o fornecedor 
+		* Bonificação/Brinde : nao é obrigatorio informar o forncedor
+		* Devolução : Alguem devolveu o produto comprado 
+                 
+	   * Incrementa/Add o estoque 
+
+	* Saida
+
+		* Devoluççao de compra : Devolveu produto para fornecedor ou de ondem comprou
+		* Perda/ quebra/ Deteiro
+		* Uso interno 
+		* Venda sem comanda
+
+ 
+
+Caso : Entrada - Compra
+	* Deve ser informado o produto
+	* Data da Movimentação
+	* Quantidade
+	* Custo unit do produto na compra
+	* isCompra Efetuada
+	* Deve ser informado o forncedor   ** Nao obrigatorio
+	* Nota Fiscal	**
+	* Observação **
+
+Caso : Devolução - Compra
+	* Deve ser informado o produto
+	* Data da Movimentação
+	* Quantidade
+	* Custo unit do produto na compra	
+	* Deve ser informado o forncedor   ** Nao obrigatorio
+	* Nota Fiscal	**
+	* Observação  informar o motivo da volta do produto
+
+Caso : Bonificação / Brinde
+	* Deve ser informado o produto
+	* Data da Movimentação
+	* Quantidade
+	* Custo unit é igual a 0	
+	* Deve ser informado o cliente   ** Nao obrigatorio
+	* Observação **
+
+
+
+-------------------------------------------------
+
+sAIDA - Decrementa do estoque
+
+Caso : Devolução de compra
+	* Deve ser informado o produto
+	* Data da Movimentação
+	* Quantidade
+	* Custo unit do produto na compra
+	* isCompra Efetuada
+	* Deve ser informado o forncedor   ** Nao obrigatorio
+	* Nota Fiscal	**
+	* Observação **
+
+
+Caso : Saida - Devolução / Quebra / Deteriorização 
+	* Deve ser informado o produto
+	* Data da Movimentação
+	* Quantidade
+	* Observação **
+
+Caso : Uso interno
+	* Deve ser informado o produto
+	* Data da Movimentação
+	* Quantidade	
+	* Responsavel : *funcionario
+	* Observação **
+
+Caso : Venda sem comanda
+* Deve ser informado o produto
+	* Data da Movimentação
+	* Quantidade	
+	* Responsavel : *funcionario
+	* Observação **
+

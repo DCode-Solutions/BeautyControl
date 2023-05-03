@@ -1,0 +1,52 @@
+﻿create table tb_usuario(
+id integer not null primary key,
+login varchar(40) not null,
+senha varchar(20) not null,
+id_status integer not null references tb_auxiliar(id) on update cascade on delete restrict,
+id_funcionario integer references tb_funcionario(id)MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+);
+
+
+
+CREATE SEQUENCE public.sq_usuario
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9999999
+  START 1
+  CACHE 1
+  CYCLE;
+ALTER TABLE public.sq_usuario
+  OWNER TO postgres;
+COMMENT ON SEQUENCE public.sq_usuario
+  IS 'Sequence utilizada na tabelas de usuario';
+
+
+CREATE OR REPLACE FUNCTION public.trg_fc_usuario()
+  RETURNS trigger AS
+$BODY$ 
+
+begin
+	if (TG_OP = 'INSERT') and  (coalesce(NEW.id,0) = 0) then 
+		select nextval('sq_usuario')
+		  into NEW.id;
+	end if;
+	return NEW;
+end; 
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.trg_fc_usuario()
+  OWNER TO postgres;
+COMMENT ON FUNCTION public.trg_fc_usuario() IS 'Criar o id no momento do insert,  caso não tenha sido informado.';
+
+
+CREATE TRIGGER trg_usuario
+  BEFORE INSERT
+  ON public.tb_usuario
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.trg_fc_usuario();
+COMMENT ON TRIGGER trg_usuario ON public.tb_usuario IS 'Gerar o id quando for nulo';
+
+
+

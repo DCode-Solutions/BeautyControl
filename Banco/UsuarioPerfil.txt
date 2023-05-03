@@ -1,0 +1,4 @@
+﻿create table tb_usuarioperfil(
+id_usuario integer not null,
+id_perfil integer not null
+);

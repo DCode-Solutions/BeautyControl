@@ -1,0 +1,48 @@
+﻿create table tb_vendaformapagamento(
+id integer not null primary key,
+valor double precision not null,
+id_venda integer not null references tb_venda(id) on update cascade on delete restrict,
+id_formapagamento integer not null references tb_auxiliar(id) on update cascade on delete restrict
+);
+
+
+
+
+CREATE SEQUENCE public.sq_vendaformapagamento
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9999999
+  START 1
+  CACHE 1
+  CYCLE;
+ALTER TABLE public.sq_vendaformapagamento
+  OWNER TO postgres;
+COMMENT ON SEQUENCE public.sq_vendaformapagamento
+  IS 'Sequence utilizada na tabelas de vendaformapagamento';
+
+
+CREATE OR REPLACE FUNCTION public.trg_fc_vendaformapagamento()
+  RETURNS trigger AS
+$BODY$ 
+
+begin
+	if (TG_OP = 'INSERT') and  (coalesce(NEW.id,0) = 0) then 
+		select nextval('sq_vendaformapagamento')
+		  into NEW.id;
+	end if;
+	return NEW;
+end; 
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.trg_fc_vendaformapagamento()
+  OWNER TO postgres;
+COMMENT ON FUNCTION public.trg_fc_vendaformapagamento() IS 'Criar o id no momento do insert,  caso não tenha sido informado.';
+
+
+CREATE TRIGGER trg_vendaformapagamento
+  BEFORE INSERT
+  ON public.tb_vendaformapagamento
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.trg_fc_vendaformapagamento();
+COMMENT ON TRIGGER trg_vendaformapagamento ON public.tb_vendaformapagamento IS 'Gerar o id quando for nulo';

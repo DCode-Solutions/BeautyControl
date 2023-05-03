@@ -1,0 +1,54 @@
+
+create table tb_auxiliar(
+id integer not null primary key,
+descricao varchar(50) not null,
+sigla varchar(5),
+tipo varchar(50)
+);
+
+
+
+
+
+CREATE SEQUENCE public.sq_auxiliar
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9999999
+  START 1
+  CACHE 1
+  CYCLE;
+ALTER TABLE public.sq_auxiliar
+  OWNER TO postgres;
+COMMENT ON SEQUENCE public.sq_auxiliar
+  IS 'Sequence utilizada na tabelas de variaveis Auxiliares';
+
+
+CREATE OR REPLACE FUNCTION public.trg_fc_auxiliar()
+  RETURNS trigger AS
+$BODY$ 
+
+begin
+	if (TG_OP = 'INSERT') and  (coalesce(NEW.id,0) = 0) then 
+		select nextval('sq_auxiliar')
+		  into NEW.id;
+	end if;
+	return NEW;
+end; 
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.trg_fc_auxiliar()
+  OWNER TO postgres;
+COMMENT ON FUNCTION public.trg_fc_auxiliar() IS 'Criar o id no momento do insert,  caso não tenha sido informado.';
+
+
+CREATE TRIGGER trg_auxiliar
+  BEFORE INSERT
+  ON public.tb_auxiliar
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.trg_fc_auxiliar();
+COMMENT ON TRIGGER trg_auxiliar ON public.tb_auxiliar IS 'Gerar o id quando for nulo';
+
+
+insert into tb_auxiliar(descricao,sigla,tipo) values('Masculino','M','Sexo');
+select * from tb_auxiliar;

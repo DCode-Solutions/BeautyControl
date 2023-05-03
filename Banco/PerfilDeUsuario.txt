@@ -1,0 +1,56 @@
+﻿create table tb_perfil(
+id integer not null primary key,
+descricao varchar(40) not null,
+prioridade int not null,
+id_empresa integer NOT NULL references tb_empresa(id) on update cascade on delete restrict
+);
+
+
+
+CREATE SEQUENCE public.sq_perfil
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9999999
+  START 1
+  CACHE 1
+  CYCLE;
+ALTER TABLE public.sq_perfil
+  OWNER TO postgres;
+COMMENT ON SEQUENCE public.sq_perfil
+  IS 'Sequence utilizada na tabelas de PErfil';
+
+
+CREATE OR REPLACE FUNCTION public.trg_fc_perfil()
+  RETURNS trigger AS
+$BODY$ 
+
+begin
+	if (TG_OP = 'INSERT') and  (coalesce(NEW.id,0) = 0) then 
+		select nextval('sq_perfil')
+		  into NEW.id;
+	end if;
+	return NEW;
+end; 
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.trg_fc_perfil()
+  OWNER TO postgres;
+COMMENT ON FUNCTION public.trg_fc_perfil() IS 'Criar o id no momento do insert,  caso não tenha sido informado.';
+
+
+CREATE TRIGGER trg_perfil
+  BEFORE INSERT
+  ON public.tb_perfil
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.trg_fc_perfil();
+COMMENT ON TRIGGER trg_perfil ON public.tb_perfil IS 'Gerar o id quando for nulo';
+
+
+
+insert into tb_perfil (descricao,prioridade,id_empresa) values
+('Administrador',9,':p_id'),
+('Gerente',8,':p_id'),
+('Profissional',6,':p_id'),
+('Auxiliar',4,':p_id'),
+('Administrador Master',10,':p_id');

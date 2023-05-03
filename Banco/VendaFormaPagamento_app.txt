@@ -1,0 +1,8 @@
+﻿create table tb_vendaformapagamento_app(
+id integer not null primary key,
+valor double precision not null,
+id_venda integer,
+id_formapagamento varchar(15)
+);
+
+

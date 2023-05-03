@@ -1,0 +1,81 @@
+
+
+CREATE TABLE tb_estado (
+id integer not null primary key,
+nome varchar(45) not null,
+sigla varchar(2) not null
+);
+
+
+
+
+CREATE SEQUENCE public.sq_estado
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9999999
+  START 30
+  CACHE 1
+  CYCLE;
+ALTER TABLE public.sq_estado
+  OWNER TO postgres;
+COMMENT ON SEQUENCE public.sq_estado
+  IS 'Sequence utilizada na tabelas de estados';
+
+
+CREATE OR REPLACE FUNCTION public.trg_fc_estado()
+  RETURNS trigger AS
+$BODY$ 
+
+begin
+	if (TG_OP = 'INSERT') and  (coalesce(NEW.id,0) = 0) then 
+		select nextval('sq_estado')
+		  into NEW.id;
+	end if;
+	return NEW;
+end; 
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.trg_fc_estado()
+  OWNER TO postgres;
+COMMENT ON FUNCTION public.trg_fc_estado() IS 'Criar o id no momento do insert,  caso não tenha sido informado.';
+
+
+CREATE TRIGGER trg_estado
+  BEFORE INSERT
+  ON public.tb_estado
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.trg_fc_estado();
+COMMENT ON TRIGGER trg_estado ON public.tb_estado IS 'Gerar o id quando for nulo';
+
+
+
+
+
+INSERT INTO tb_estado VALUES(1, 'Acre', 'AC');
+INSERT INTO tb_estado VALUES(2, 'Alagoas', 'AL');
+INSERT INTO tb_estado VALUES(3, 'Amazonas', 'AM');
+INSERT INTO tb_estado VALUES(4, 'Amapá', 'AP');
+INSERT INTO tb_estado VALUES(5, 'Bahia', 'BA');
+INSERT INTO tb_estado VALUES(6, 'Ceará', 'CE');
+INSERT INTO tb_estado VALUES(7, 'Distrito Federal', 'DF');
+INSERT INTO tb_estado VALUES(8, 'Espírito Santo', 'ES');
+INSERT INTO tb_estado VALUES(9, 'Goiás', 'GO');
+INSERT INTO tb_estado VALUES(10, 'Maranhão', 'MA');
+INSERT INTO tb_estado VALUES(11, 'Minas Gerais', 'MG');
+INSERT INTO tb_estado VALUES(12, 'Mato Grosso do Sul', 'MS');
+INSERT INTO tb_estado VALUES(13, 'Mato Grosso', 'MT');
+INSERT INTO tb_estado VALUES(14, 'Pará', 'PA');
+INSERT INTO tb_estado VALUES(15, 'Paraíba', 'PB');
+INSERT INTO tb_estado VALUES(16, 'Pernambuco', 'PE');
+INSERT INTO tb_estado VALUES(17, 'Piauí', 'PI');
+INSERT INTO tb_estado VALUES(18, 'Paraná', 'PR');
+INSERT INTO tb_estado VALUES(19, 'Rio de Janeiro', 'RJ');
+INSERT INTO tb_estado VALUES(20, 'Rio Grande do Norte', 'RN');
+INSERT INTO tb_estado VALUES(21, 'Rondônia', 'RO');
+INSERT INTO tb_estado VALUES(22, 'Roraima', 'RR');
+INSERT INTO tb_estado VALUES(23, 'Rio Grande do Sul', 'RS');
+INSERT INTO tb_estado VALUES(24, 'Santa Catarina', 'SC');
+INSERT INTO tb_estado VALUES(25, 'Sergipe', 'SE');
+INSERT INTO tb_estado VALUES(26, 'São Paulo', 'SP');
+INSERT INTO tb_estado VALUES(27, 'Tocantins', 'TO');

@@ -1,0 +1,8 @@
+create table tb_venda_app(
+id integer not null primary key,
+dataservico integer not null,
+ispago boolean not null,
+servico varchar(10),
+id_cliente integer,
+desconto double precision
+);

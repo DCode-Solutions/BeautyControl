@@ -1,0 +1,48 @@
+
+create table tb_periodoassociado(
+id integer not null primary key,
+datainicio integer,
+datafim integer,
+id_vinculo integer references tb_auxiliar(id) on update cascade on delete restrict ,
+id_funcionario integer references tb_funcionario(id) on update cascade on delete restrict );
+
+
+
+CREATE SEQUENCE public.sq_periodoassociado
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9999999
+  START 1
+  CACHE 1
+  CYCLE;
+ALTER TABLE public.sq_periodoassociado
+  OWNER TO postgres;
+COMMENT ON SEQUENCE public.sq_periodoassociado
+  IS 'Sequence utilizada na tabelas de Periodo Associado';
+
+
+CREATE OR REPLACE FUNCTION public.trg_fc_periodoassociado()
+  RETURNS trigger AS
+$BODY$ 
+
+begin
+	if (TG_OP = 'INSERT') and  (coalesce(NEW.id,0) = 0) then 
+		select nextval('sq_periodoassociado')
+		  into NEW.id;
+	end if;
+	return NEW;
+end; 
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.trg_fc_periodoassociado()
+  OWNER TO postgres;
+COMMENT ON FUNCTION public.trg_fc_periodoassociado() IS 'Criar o id no momento do insert,  caso não tenha sido informado.';
+
+
+CREATE TRIGGER trg_periodoassociado
+  BEFORE INSERT
+  ON public.tb_periodoassociado
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.trg_fc_periodoassociado();
+COMMENT ON TRIGGER trg_periodoassociado ON public.tb_periodoassociado IS 'Gerar o id quando for nulo';

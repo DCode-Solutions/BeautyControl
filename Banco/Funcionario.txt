@@ -1,0 +1,70 @@
+﻿
+create table tb_funcionario(
+id integer not null primary key,
+nome varchar(100) not null,
+rg varchar(14),
+cpf varchar(14),
+datanascimento integer,
+email varchar(40),
+foto bytea,
+telefone varchar(10),
+celular01 varchar(11),
+celular02 varchar(11),
+celular03 varchar(11),
+-- datainicio date,
+-- datafim date,
+rua varchar(100),
+referencia varchar(100),
+latitude double precision,
+longitude double precision,
+cep varchar(9),
+id_bairro integer references tb_bairro(id) on update cascade on delete restrict,
+id_sexo integer references tb_auxiliar(id) on update cascade on delete restrict,
+id_vinculoatual integer not null references tb_auxiliar(id) on update cascade on delete restrict,
+id_empresa integer not null references tb_empresa(id) on update cascade on delete restrict,
+id_funcaoprincipal integer not null references tb_funcao(id) on update cascade on delete restrict
+);
+
+
+
+CREATE SEQUENCE public.sq_funcionario
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9999999
+  START 1
+  CACHE 1
+  CYCLE;
+ALTER TABLE public.sq_funcionario
+  OWNER TO postgres;
+COMMENT ON SEQUENCE public.sq_funcionario
+  IS 'Sequence utilizada na tabelas de Funcionario';
+
+
+CREATE OR REPLACE FUNCTION public.trg_fc_funcionario()
+  RETURNS trigger AS
+$BODY$ 
+
+begin
+	if (TG_OP = 'INSERT') and  (coalesce(NEW.id,0) = 0) then 
+		select nextval('sq_funcionario')
+		  into NEW.id;
+	end if;
+	return NEW;
+end; 
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.trg_fc_funcionario()
+  OWNER TO postgres;
+COMMENT ON FUNCTION public.trg_fc_funcionario() IS 'Criar o id no momento do insert,  caso não tenha sido informado.';
+
+
+CREATE TRIGGER trg_funcionario
+  BEFORE INSERT
+  ON public.tb_funcionario
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.trg_fc_funcionario();
+COMMENT ON TRIGGER trg_funcionario ON public.tb_funcionario IS 'Gerar o id quando for nulo';
+
+
+

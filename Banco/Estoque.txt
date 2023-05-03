@@ -1,0 +1,47 @@
+create table tb_estoque(
+id integer not null primary key,
+id_produto integer not null references tb_produto01(id) on update cascade on delete restrict,
+quantidade integer not null
+);
+
+
+
+
+CREATE SEQUENCE public.sq_estoque
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9999999
+  START 1
+  CACHE 1
+  CYCLE;
+ALTER TABLE public.sq_estoque
+  OWNER TO postgres;
+COMMENT ON SEQUENCE public.sq_estoque
+  IS 'Sequence utilizada na tabelas de Periodo Associado';
+
+
+CREATE OR REPLACE FUNCTION public.trg_fc_estoque()
+  RETURNS trigger AS
+$BODY$ 
+
+begin
+	if (TG_OP = 'INSERT') and  (coalesce(NEW.id,0) = 0) then 
+		select nextval('sq_estoque')
+		  into NEW.id;
+	end if;
+	return NEW;
+end; 
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.trg_fc_estoque()
+  OWNER TO postgres;
+COMMENT ON FUNCTION public.trg_fc_estoque() IS 'Criar o id no momento do insert,  caso não tenha sido informado.';
+
+
+CREATE TRIGGER trg_estoque
+  BEFORE INSERT
+  ON public.tb_estoque
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.trg_fc_estoque();
+COMMENT ON TRIGGER trg_estoque ON public.tb_estoque IS 'Gerar o id quando for nulo';

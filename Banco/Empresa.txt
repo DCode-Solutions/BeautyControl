@@ -1,0 +1,51 @@
+﻿create table tb_empresa(
+id integer not null primary key,
+nome varchar(100) not null,
+razaosocial varchar(100) not null,
+cnpj varchar(18),
+cpf varchar(14)
+);
+
+
+
+
+CREATE SEQUENCE public.sq_empresa
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9999999
+  START 1
+  CACHE 1
+  CYCLE;
+ALTER TABLE public.sq_empresa
+  OWNER TO postgres;
+COMMENT ON SEQUENCE public.sq_empresa
+  IS 'Sequence utilizada na tabelas de Empresa';
+
+
+CREATE OR REPLACE FUNCTION public.trg_fc_empresa()
+  RETURNS trigger AS
+$BODY$ 
+
+begin
+	if (TG_OP = 'INSERT') and  (coalesce(NEW.id,0) = 0) then 
+		select nextval('sq_empresa')
+		  into NEW.id;
+	end if;
+	return NEW;
+end; 
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.trg_fc_empresa()
+  OWNER TO postgres;
+COMMENT ON FUNCTION public.trg_fc_empresa() IS 'Criar o id no momento do insert,  caso não tenha sido informado.';
+
+
+CREATE TRIGGER trg_empresa
+  BEFORE INSERT
+  ON public.tb_empresa
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.trg_fc_empresa();
+COMMENT ON TRIGGER trg_empresa ON public.tb_empresa IS 'Gerar o id quando for nulo';
+
+insert into tb_empresa(nome,razaosocial,cnpj,cpf) values('Maria Auxiliadora da Silva Ferreira','Salão Auxílio da Beleza','','000.000.000-00')

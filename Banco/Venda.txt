@@ -1,0 +1,53 @@
+create table tb_venda(
+id integer not null primary key,
+dataservico integer not null,
+horainicio integer,
+horafim integer,
+ispago boolean not null,
+id_servico integer not null  references tb_auxiliar(id) on update cascade on delete restrict,
+id_cliente integer not null  references tb_cliente(id) on update cascade on delete restrict,
+desconto double precision
+);
+
+
+CREATE SEQUENCE public.sq_venda
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9999999
+  START 1
+  CACHE 1
+  CYCLE;
+ALTER TABLE public.sq_venda
+  OWNER TO postgres;
+COMMENT ON SEQUENCE public.sq_venda
+  IS 'Sequence utilizada na tabelas de venda';
+
+
+CREATE OR REPLACE FUNCTION public.trg_fc_venda()
+  RETURNS trigger AS
+$BODY$ 
+
+begin
+	if (TG_OP = 'INSERT') and  (coalesce(NEW.id,0) = 0) then 
+		select nextval('sq_venda')
+		  into NEW.id;
+	end if;
+	return NEW;
+end; 
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.trg_fc_venda()
+  OWNER TO postgres;
+COMMENT ON FUNCTION public.trg_fc_venda() IS 'Criar o id no momento do insert,  caso não tenha sido informado.';
+
+
+CREATE TRIGGER trg_venda
+  BEFORE INSERT
+  ON public.tb_venda
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.trg_fc_venda();
+COMMENT ON TRIGGER trg_venda ON public.tb_venda IS 'Gerar o id quando for nulo';
+
+
+

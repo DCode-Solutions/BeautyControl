@@ -1,0 +1,2 @@
+INSERT INTO tb_categoria(nome) 
+values('Manicure'),('Cabelo'),('Depilação'),('Estética')

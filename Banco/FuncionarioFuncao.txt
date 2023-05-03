@@ -1,0 +1,4 @@
+create table tb_funcionariofuncao(
+id_funcionario integer not null,
+id_funcao integer not null
+);

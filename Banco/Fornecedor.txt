@@ -1,0 +1,61 @@
+﻿create table tb_fornecedor(
+id integer not null primary key,
+nome varchar (100) not null,
+razaosocial varchar(100),
+telefone varchar(10),
+celular01 varchar (11),
+celular02 varchar (11),
+celular03 varchar (11),
+email varchar (30),
+cep varchar (9),
+rua varchar (50),
+referencia varchar (50),
+id_bairro integer references tb_bairro on update cascade on delete restrict,
+site varchar(50),
+cnpj varchar(18),
+inscricaoestadual varchar (50),
+inscricaomunicipal varchar (50)
+);
+
+
+CREATE SEQUENCE public.sq_fornecedor
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9999999
+  START 1
+  CACHE 1
+  CYCLE;
+ALTER TABLE public.sq_fornecedor
+  OWNER TO postgres;
+COMMENT ON SEQUENCE public.sq_fornecedor
+  IS 'Sequence utilizada na tabelas de fornecedor';
+
+
+CREATE OR REPLACE FUNCTION public.trg_fc_fornecedor()
+  RETURNS trigger AS
+$BODY$ 
+
+begin
+	if (TG_OP = 'INSERT') and  (coalesce(NEW.id,0) = 0) then 
+		select nextval('sq_fornecedor')
+		  into NEW.id;
+	end if;
+	return NEW;
+end; 
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.trg_fc_fornecedor()
+  OWNER TO postgres;
+COMMENT ON FUNCTION public.trg_fc_fornecedor() IS 'Criar o id no momento do insert,  caso não tenha sido informado.';
+
+
+CREATE TRIGGER trg_fornecedor
+  BEFORE INSERT
+  ON public.tb_fornecedor
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.trg_fc_fornecedor();
+COMMENT ON TRIGGER trg_fornecedor ON public.tb_fornecedor IS 'Gerar o id quando for nulo';
+
+
+

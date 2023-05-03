@@ -1,0 +1,53 @@
+
+create table tb_produto01(
+id integer not null primary key,
+nome varchar(50) not null,
+id_tipoproduto  integer references tb_auxiliar(id) on update cascade on delete restrict,
+foto bytea,
+marca varchar(50),
+descricao varchar (50),
+codigobarra integer,
+observacao varchar (80)
+);
+
+ 
+CREATE SEQUENCE public.sq_produto01
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9999999
+  START 1
+  CACHE 1
+  CYCLE;
+ALTER TABLE public.sq_produto01
+  OWNER TO postgres;
+COMMENT ON SEQUENCE public.sq_produto01
+  IS 'Sequence utilizada na tabelas de Produto01';
+
+
+CREATE OR REPLACE FUNCTION public.trg_fc_produto01()
+  RETURNS trigger AS
+$BODY$ 
+
+begin
+	if (TG_OP = 'INSERT') and  (coalesce(NEW.id,0) = 0) then 
+		select nextval('sq_produto01')
+		  into NEW.id;
+	end if;
+	return NEW;
+end; 
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.trg_fc_produto01()
+  OWNER TO postgres;
+COMMENT ON FUNCTION public.trg_fc_produto01() IS 'Criar o id no momento do insert,  caso não tenha sido informado.';
+
+CREATE TRIGGER trg_produto01
+  BEFORE INSERT
+  ON public.tb_produto01
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.trg_fc_produto01();
+COMMENT ON TRIGGER trg_produto01 ON public.tb_produto01 IS 'Gerar o id quando for nulo';
+
+
+Add da Aba de Parametros

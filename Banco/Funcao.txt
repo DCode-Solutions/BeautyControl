@@ -1,0 +1,65 @@
+﻿
+create table tb_funcao(
+id integer not null primary key,
+nome varchar(40) not null,
+descricao varchar (100),
+id_departamento integer references tb_departamento(id) on update cascade on delete restrict );
+
+
+
+CREATE SEQUENCE public.sq_funcao
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9999999
+  START 1
+  CACHE 1
+  CYCLE;
+ALTER TABLE public.sq_funcao
+  OWNER TO postgres;
+COMMENT ON SEQUENCE public.sq_funcao
+  IS 'Sequence utilizada na tabelas de Funcoes';
+
+
+CREATE OR REPLACE FUNCTION public.trg_fc_funcao()
+  RETURNS trigger AS
+$BODY$ 
+
+begin
+	if (TG_OP = 'INSERT') and  (coalesce(NEW.id,0) = 0) then 
+		select nextval('sq_funcao')
+		  into NEW.id;
+	end if;
+	return NEW;
+end; 
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.trg_fc_funcao()
+  OWNER TO postgres;
+COMMENT ON FUNCTION public.trg_fc_funcao() IS 'Criar o id no momento do insert,  caso não tenha sido informado.';
+
+
+CREATE TRIGGER trg_funcao
+  BEFORE INSERT
+  ON public.tb_funcao
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.trg_fc_funcao();
+COMMENT ON TRIGGER trg_funcao ON public.tb_funcao IS 'Gerar o id quando for nulo';
+
+insert into tb_funcao(nome,descricao,id_departamento) values
+('Administrador','Administra o sistema',1),
+('Recepcionista','Recepcionista do salão',1),
+('Assistente do salão','',3),
+('Aprendiz','',3),
+('Colorista','Pinturas de cabelo',3),
+('Cabeleireiro','Realiza cortes de cabelo, penteados',3),
+('Manicure','Serviços de podologia',3),
+('Depilador','Realiza serviços de Depilação corpotal',3),
+('Maquiador','Realiza serviços de maquiagens',3),
+('Esteticista','Realiza serviços estéticos',3),
+('Ajudante','Auxilia nos demais serviços do salão',3),
+('Gerente Administrativo','',1),
+('Gerente Financeiro','',2),
+('Auxiliar administrativo','',1),
+('Caixa','',3),
+('Massagista','',3);

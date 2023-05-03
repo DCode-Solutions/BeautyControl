@@ -1,0 +1,103 @@
+Splash > Login > Principal > 
+
+1 Primeira Vez - Tela de cadastro - ADMIN
+ ideia é que envie um email com a senha para o email se houver internet
+
+2 - Tela Login 
+    Grid lookup Edit - ComboBox
+
+Botao esqueceu  senha : um email é enviado com  a senha "esquecida"
+
+mas se o usuario nao possuir internet? 
+entrar em contato com o adm
+
+
+
+Iniciando a aplicação
+
+1* - Tela Splash 
+
+Se for a primeira vez 
+	2* 
+	        Cadastrar a empresa para o sistema
+		Em seguida dados do primeiro funcionario e usuario que sera um usuario master/administrador
+		Tela de cadastro do usuario master ou ADM
+
+	Empresa: 
+		a. nome
+		b. cnpj/cpf
+		c. razaosocial
+
+	Funcionario Usuario
+		a. nome		
+		d. dataNascto
+		e. email
+		f. sexo
+		g. telefone01
+		h. celular01
+		i. Funcao Principal
+		j. senha
+
+	Na primeira vez do sistema sera necessario informar dado da empresa
+	O primeiro usuario sera cadastrado como administrador do sistema
+	Para ter acesso ao sistema e começar a fazer os cadastros e atualizaçoes necessarias
+Senao
+
+3* Carrega principal Vazio ou sugestao é o menu header invisivel 
+
+4* Tela de login "pop up" ou windows forms
+      Possuira um combobox ou gridlookUp com os usuarios ativos do sistema
+      Se o usuario esqueceu a senha o usuario com perfil adim ou master tem acesso para editar nova senha do usuario
+      ou usar a opçao enviar a senha para o email
+      Se o Master ou admin esqueceu a senha : deve usar a opçao mandar senha para o email
+      Se o usuario naoo tem acesso a internet para o envio do email
+      Deve entra em contato com o adm do sistema
+
+5* Carrega a principal / menu header visivel
+BusinessObjects/bofileattachment_32x32.png
+Menu Header
+ * Cadastros 
+	1. Cliente
+	2. Profissional
+	3. Serviços
+	4. Produtos
+	5. Fornecedores
+	6. Cartoes
+	7. Lista 
+	----------
+	8. Tudo Sobre Cliente 
+	9. Localizar por telefone ou parte
+
+
+Dados Padroes:
+1. Perfil Usuario
+	a. Administrador
+	b. Gerente
+	c. Profissional
+	d. Assistente
+
+2. Departamento
+	a. Financeiro
+	b. Produção
+	c. Administrativo
+
+3. Função
+	a. Administrador
+	b. Recepcionista
+	c. Assistente do salão
+	d. Aprendiz
+	e. Colorista
+	f. Cabeleireiro
+	g. Manicure
+	g. Depilador
+	i. Maquiador
+	j. Esteticista
+	g. Ajudante
+	m. Gerente
+	n. Auxiliar administrativo
+	o. Caixa
+        p. Massagista
+	p. Outros
+      
+
+

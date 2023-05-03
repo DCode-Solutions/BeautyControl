@@ -1,0 +1,55 @@
+﻿create table tb_movimentacao01(
+id integer not null primary key,
+datamovimentacao integer not null,
+quantidade integer not null,
+custounit double precision,
+isCompraEfetuada boolean,
+codclienteorfornecedor integer,
+notafiscal varchar (80),
+observacao varchar (100),
+id_tipomovimentacao integer not null references tb_auxiliar(id) on update cascade on delete restrict,
+id_produto integer not null references tb_produto01(id) on update cascade on delete restrict
+);
+
+
+CREATE SEQUENCE public.sq_movimentacao01
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9999999
+  START 1
+  CACHE 1
+  CYCLE;
+ALTER TABLE public.sq_movimentacao01
+  OWNER TO postgres;
+COMMENT ON SEQUENCE public.sq_movimentacao01
+  IS 'Sequence utilizada na tabelas de movimentacao01';
+
+
+CREATE OR REPLACE FUNCTION public.trg_fc_movimentacao01()
+  RETURNS trigger AS
+$BODY$ 
+
+begin
+	if (TG_OP = 'INSERT') and  (coalesce(NEW.id,0) = 0) then 
+		select nextval('sq_movimentacao01')
+		  into NEW.id;
+	end if;
+	return NEW;
+end; 
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.trg_fc_movimentacao01()
+  OWNER TO postgres;
+COMMENT ON FUNCTION public.trg_fc_movimentacao01() IS 'Criar o id no momento do insert,  caso não tenha sido informado.';
+
+
+CREATE TRIGGER trg_movimentacao01
+  BEFORE INSERT
+  ON public.tb_movimentacao01
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.trg_fc_movimentacao01();
+COMMENT ON TRIGGER trg_movimentacao01 ON public.tb_movimentacao01 IS 'Gerar o id quando for nulo';
+
+
+

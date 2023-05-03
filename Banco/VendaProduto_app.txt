@@ -1,0 +1,10 @@
+create table tb_vendaproduto_app(
+id integer not null primary key,
+qtdproduto integer not null,
+precocobrado double precision,
+precoproduto double precision,
+observacao varchar(200),
+id_venda integer,
+id_produto integer,
+id_funcionario integer
+);

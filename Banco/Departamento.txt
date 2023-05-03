@@ -1,0 +1,53 @@
+﻿create table tb_departamento(
+id integer not null primary key,
+nome varchar(40) not null,
+sigla varchar(3) not null
+);
+
+
+
+CREATE SEQUENCE public.sq_departamento
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9999999
+  START 1
+  CACHE 1
+  CYCLE;
+ALTER TABLE public.sq_departamento
+  OWNER TO postgres;
+COMMENT ON SEQUENCE public.sq_departamento
+  IS 'Sequence utilizada na tabelas de Departamento';
+
+
+CREATE OR REPLACE FUNCTION public.trg_fc_departamento()
+  RETURNS trigger AS
+$BODY$ 
+
+begin
+	if (TG_OP = 'INSERT') and  (coalesce(NEW.id,0) = 0) then 
+		select nextval('sq_departamento')
+		  into NEW.id;
+	end if;
+	return NEW;
+end; 
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.trg_fc_departamento()
+  OWNER TO postgres;
+COMMENT ON FUNCTION public.trg_fc_departamento() IS 'Criar o id no momento do insert,  caso não tenha sido informado.';
+
+
+CREATE TRIGGER trg_departamento
+  BEFORE INSERT
+  ON public.tb_departamento
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.trg_fc_departamento();
+COMMENT ON TRIGGER trg_departamento ON public.tb_departamento IS 'Gerar o id quando for nulo';
+
+
+
+insert into tb_departamento(nome,sigla) values
+('Administrativo','ADM'),
+('Financeiro','FIN'),
+('Produção','PDC');

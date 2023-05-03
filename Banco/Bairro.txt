@@ -1,0 +1,113 @@
+create table tb_bairro(
+id integer not null primary key,
+nome varchar(35) not null,
+id_zona integer references tb_auxiliar(id) on update cascade on delete restrict,
+id_cidade integer not null references tb_cidade(id) on update cascade on delete restrict
+);
+
+CREATE SEQUENCE public.sq_bairro
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9999999
+  START 1
+  CACHE 1
+  CYCLE;
+ALTER TABLE public.sq_bairro
+  OWNER TO postgres;
+COMMENT ON SEQUENCE public.sq_bairro
+  IS 'Sequence utilizada na tabelas de Bairro';
+
+
+CREATE OR REPLACE FUNCTION public.trg_fc_bairro()
+  RETURNS trigger AS
+$BODY$ 
+
+begin
+	if (TG_OP = 'INSERT') and  (coalesce(NEW.id,0) = 0) then 
+		select nextval('sq_bairro')
+		  into NEW.id;
+	end if;
+	return NEW;
+end; 
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.trg_fc_bairro()
+  OWNER TO postgres;
+COMMENT ON FUNCTION public.trg_fc_bairro() IS 'Criar o id no momento do insert,  caso não tenha sido informado.';
+
+
+CREATE TRIGGER trg_bairro
+  BEFORE INSERT
+  ON public.tb_bairro
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.trg_fc_bairro();
+COMMENT ON TRIGGER trg_bairro ON public.tb_bairro IS 'Gerar o id quando for nulo';
+
+
+insert into tb_bairro (nome,id_zona,id_cidade)
+values('Adrianópolis',5,239),('Aleixo',5,239);
+
+insert into tb_bairro (nome,id_zona,id_cidade) values
+('Alvorada',6,239),
+('Armando Mendes',3,239),
+('Betânia',2,239),
+('Cachoeirinha',2,239),
+('Centro',2,239),
+('Chapada',5,239),
+('Cidade de Deus',1,239),
+('Cidade Nova',1,239),
+('Colônia Antônio Aleixo',3,239),
+('Colônia Oliveira Machado',2,239),
+('Colônia Santo Antônio',1,239),
+('Colônia Terra Nova',1,239),
+('Compensa',4,239),
+('Coroado',3,239),
+('Crespo',2,239),
+('Bairro da Paz',6,239),
+('Distrito Industrial I',2,239),
+('Distrito Industrial II',3,239),
+('Dom Pedro',6,239),
+('Educandos',2,239),
+('Flores',5,239),
+('Gilberto Mestrinho',3,239),
+('Glória',4,239),
+('Japiim',2,239),
+('Jorge Teixeira',3,239),
+('Lagoa Azul',1,239),
+('Lírio do Vale',4,239),
+('Mauazinho',3,239),
+('Monte das Oliveiras',1,239),
+('Morro da Liberdade',2,239),
+('Nossa Senhora Aparecida',2,239),
+('Nossa Senhora das Graças',5,239),
+('Nova Cidade',1,239),
+('Nova Esperença',4,239),
+('Novo Aleixo',1,239),
+('Novo Israel',1,239),
+('Parque 10 de Novembro',5,239),
+('Petrópolis',2,239),
+('Planalto',6,239),
+('Ponta Negra',4,239),
+('Praça 14 de Janeiro',2,239),
+('Presidente Vargas',2,239),
+('Puraquequara',3,239),
+('Raiz',2,239),
+('Redenção',6,239),
+('Santa Etelvina',1,239),
+('Santa Luzia',2,239),
+('Santo Agostinho',4,239),
+('Santo Antônio',4,239),
+('São Francisco',2,239),
+('São Geraldo',5,239),
+('São Jorge',4,239),
+('São José Operário',3,239),
+('São Lázaro',2,239),
+('São Raimundo',4,239),
+('Tancredo Neves',3,239),
+('Tarumã',4,239),
+('Vila Buriti',2,239),
+('Vila da Prata',4,239),
+('Zumbi',3,239);
+
+

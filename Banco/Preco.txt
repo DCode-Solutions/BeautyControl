@@ -1,0 +1,49 @@
+create table tb_preco(
+id integer not null primary key,
+descricao varchar(20) not null,
+detalhe varchar(50),
+prioridade integer not null,
+preco double precision not null,
+datainicio integer not null,
+datafim integer,
+id_produto integer not null references tb_produto(id) on update cascade on delete restrict
+);
+
+CREATE SEQUENCE public.sq_preco
+  INCREMENT 1
+  MINVALUE 1
+  MAXVALUE 9999999
+  START 1
+  CACHE 1
+  CYCLE;
+ALTER TABLE public.sq_preco
+  OWNER TO postgres;
+COMMENT ON SEQUENCE public.sq_preco
+  IS 'Sequence utilizada na tabelas de Preços';
+
+
+CREATE OR REPLACE FUNCTION public.trg_fc_preco()
+  RETURNS trigger AS
+$BODY$ 
+
+begin
+	if (TG_OP = 'INSERT') and  (coalesce(NEW.id,0) = 0) then 
+		select nextval('sq_preco')
+		  into NEW.id;
+	end if;
+	return NEW;
+end; 
+$BODY$
+  LANGUAGE plpgsql VOLATILE
+  COST 100;
+ALTER FUNCTION public.trg_fc_preco()
+  OWNER TO postgres;
+COMMENT ON FUNCTION public.trg_fc_preco() IS 'Criar o id no momento do insert,  caso não tenha sido informado.';
+
+
+CREATE TRIGGER trg_preco
+  BEFORE INSERT
+  ON public.tb_preco
+  FOR EACH ROW
+  EXECUTE PROCEDURE public.trg_fc_preco();
+COMMENT ON TRIGGER trg_preco ON public.tb_preco IS 'Gerar o id quando for nulo';

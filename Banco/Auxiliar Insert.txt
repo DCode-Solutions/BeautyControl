@@ -1,0 +1,48 @@
+
+
+insert into tb_auxiliar(descricao,sigla,tipo) values('Norte','N','zona');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Sul','S','zona');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Leste','L','zona');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Oeste','O','zona');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Centro-Sul','CS','zona');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Centro-Oeste','CO','zona');
+
+
+insert into tb_auxiliar(descricao,sigla,tipo) values('Ativo','A','status');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Inativo','I','status');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Bloqueado','B','status');
+
+
+insert into tb_auxiliar(descricao,sigla,tipo) values('Masculino','M','sexo');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Feminino','F','sexo');
+
+insert into tb_auxiliar(descricao,sigla,tipo) values('Efetivo','EFT','vinculo');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Temporário','TMP','vinculo');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Freelancer','FLC','vinculo');
+
+insert into tb_auxiliar(descricao,sigla,tipo) values('(+) Entrada - Compra','ECP','movimentacaoestoque');
+insert into tb_auxiliar(descricao,sigla,tipo) values('(+) Entrada - Bonificação/Brinde','EBB','movimentacaoestoque');
+insert into tb_auxiliar(descricao,sigla,tipo) values('(+) Entrada - Devolução de Venda','EDV','movimentacaoestoque');
+insert into tb_auxiliar(descricao,sigla,tipo) values('(-) Saída - Devolução de Compra','SDC','movimentacaoestoque');
+insert into tb_auxiliar(descricao,sigla,tipo) values('(-) Saída - Perda/Quebra/Deterioração','SPQ','movimentacaoestoque');
+insert into tb_auxiliar(descricao,sigla,tipo) values('(-) Saída - Uso Interno','SUI','movimentacaoestoque');
+insert into tb_auxiliar(descricao,sigla,tipo) values('(-) Saída - Venda sem Comanda','SVC','movimentacaoestoque');
+
+
+insert into tb_auxiliar(descricao,sigla,tipo) values('Condicionador','CDC','produto');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Shampoo','SMP','produto');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Tintura','TNT','produto');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Shampoo','SMP','produto');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Creme','CRM','produto');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Esmalte','ESMT','produto');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Maquiagem','MQGM','produto');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Equipamento/Acessório','EQP','produto');
+
+
+insert into tb_auxiliar(descricao,sigla,tipo) values('Local','SLC','tiposervico');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Domicílio','SDM','tiposervico');
+
+insert into tb_auxiliar(descricao,sigla,tipo) values('Dinheiro','FPDN','formapagamento');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Débito','FPDB','formapagamento');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Crédito','FPCD','formapagamento');
+insert into tb_auxiliar(descricao,sigla,tipo) values('Cheque','FPCQ','formapagamento');
